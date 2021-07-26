@@ -1,59 +1,73 @@
-var helicopterImg, bgImg;
-var helicopterSprite, packageSprite;
-var packageBody,boxBottomBody, boxLeftBody, boxRightBody;
+var helicopterIMG, helicopterSprite, packageSprite, packageIMG;
+var packageBody,bgImg;
+var box1,box2,box3;
 
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
-
+const Body = Matter.Body;
 
 function preload()
 {
-	helicopterImg=loadImage("helicopter.png")
+	helicopterIMG=loadImage("helicopter.png")
+	packageIMG=loadImage("package.png")
 	bgImg=loadImage("bg.png")
 }
 
 function setup() {
 	createCanvas(800, 700);
 	rectMode(CENTER);
-	engine = Engine.create();
-	world = engine.world;
+	
 
-	packageSprite=createSprite(width/2, 50,200,200);
-	packageSprite.shapeColor = "yellow"
+	packageSprite=createSprite(width/2, 80, 20,20);
+	packageSprite.addImage(packageIMG)
 	packageSprite.scale=0.2
 
-	helicopterSprite=createSprite(width/2, 100, 10,10);
-	helicopterSprite.addImage(helicopterImg)
+	helicopterSprite=createSprite(width/2, 200, 10,10);
+	helicopterSprite.addImage(helicopterIMG)
 	helicopterSprite.scale=0.6
+
+	//groundSprite=createSprite(width/2, height-35, width,10);
+	//groundSprite.shapeColor=color(255)
+
 
 	engine = Engine.create();
 	world = engine.world;
-	
-	boxBottomBody = new Box(400, 610, 200,20);
- 	boxLeftBody = new Box(310, 570, 20,100);
- 	boxRightBody = new Box(490, 570, 20,100);
 
-	packageBody = Bodies.circle(width/2 , 100 , 20 , {restitution:0.4, isStatic:true});
+	packageBody = Bodies.circle(width/2 , 200 , 20 , {restitution:0.2, isStatic:true});
 	World.add(world, packageBody);
 
+
+	//Create a Ground
+	//ground = Bodies.rectangle(width/2, 650, width, 10 , {isStatic:true} );
+ 	//World.add(world, ground);
+
+	box2 = new Box(500,650,20,100,"red");
+	box3 = new Box(295,650,20,100,"red");
+	box1 = new Box(400,690,200,20,"red");
+	
+	Engine.run(engine);
 }
 
 
 function draw() {
-	Engine.update(engine);
-	background(bgImg);
+  rectMode(CENTER);
+  background(bgImg);
+  packageSprite.x= packageBody.position.x 
+  packageSprite.y= packageBody.position.y 
+  drawSprites();
+  
 	
-	packageSprite.x= packageBody.position.x 
-	packageSprite.y= packageBody.position.y 
+  if(keyDown(DOWN_ARROW)) {
+	Matter.Body.setStatic(packageBody,false);
+	}	
+	
+	box1.display();
+	box2.display();
+	box3.display();
 
-	boxRightBody.display();
-	boxLeftBody.display();
-	boxBottomBody.display();
-
-	drawSprites(); 
+  Engine.update(engine);
 }
-
 function keyPressed() {
 	
 	if (keyCode === LEFT_ARROW) {
@@ -68,11 +82,4 @@ function keyPressed() {
 		translation={x:20,y:0}
 		Matter.Body.translate(packageBody, translation)
 		
-	  }
-	  
-	if (keyCode === DOWN_ARROW) {
-	   //make the static property of packageBody as false
-
-	}
-}
-  
+	  }}
